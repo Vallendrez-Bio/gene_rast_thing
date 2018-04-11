@@ -1,0 +1,7 @@
+foo	feature_id	nucleotide_sequence	baz
+h	a	ATGC	a
+i	b	CATG	b
+j	c	GCAT	c
+k	d	TGCA	d
+l	e	AAAA	b
+m	f	CCCC	b
