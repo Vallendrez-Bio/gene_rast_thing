@@ -18,3 +18,16 @@ def read_fasta_file(fasta_file_path):
     else:
       sequences[last_name] += line.strip()
   return sequences
+
+def seq_dict_to_fasta(seq_dict):
+  '''
+  >>> x = {'a|a': '123456789', 'b|b': '123456789', 'c|c': '123456789'}
+  >>> seq_dict_to_fasta(x)
+  '>a|a\\n123456789\\n>b|b\\n123456789\\n>c|c\\n123456789'
+  '''
+  fasta = []
+  for identifier, sequence in seq_dict.items():
+    fasta.append('>{}'.format(identifier))
+    fasta.append('{}'.format(sequence))
+  return '\n'.join(fasta)
+

@@ -70,18 +70,6 @@ def concat(files, identifier_pattern):
       sequences[ident] += sequence
   return sequences
 
-def seq_dict_to_fasta(seq_dict):
-  '''
-  >>> x = {'a|a': '123456789', 'b|b': '123456789', 'c|c': '123456789'}
-  >>> seq_dict_to_fasta(x)
-  '>a|a\\n123456789\\n>b|b\\n123456789\\n>c|c\\n123456789'
-  '''
-  fasta = []
-  for identifier, sequence in seq_dict.items():
-    fasta.append('>{}'.format(identifier))
-    fasta.append('{}'.format(sequence))
-  return '\n'.join(fasta)
-
 def natural_sort(filepaths):
   '''
   >>> x = ['a/10.fasta', 'a/1.fasta', 'a/2.fasta']
@@ -109,7 +97,7 @@ def main():
   args = parse_args()
   fasta_files = natural_sort(args.fasta_files)
   concat_seqs = concat(fasta_files, args.identifier_pattern)
-  concat_fasta = seq_dict_to_fasta(concat_seqs)
+  concat_fasta = fasta.seq_dict_to_fasta(concat_seqs)
   sys.stdout.write(concat_fasta)
   sys.stdout.flush()
 

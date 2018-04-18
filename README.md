@@ -38,3 +38,9 @@
    ```
    ./sequence_files_concat.py --identifier-pattern "(fig\|\d+\.\d+\.peg)" output_aln/* > out.fasta
    ```
+
+1. Trim out all '-' columns
+
+   ```
+   ./trim_alignment.py out.fasta > out.trim.fasta
+   ```
