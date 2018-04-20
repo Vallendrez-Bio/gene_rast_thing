@@ -38,7 +38,7 @@ Comparison TSV files are generated in RAST when you select the compare genomes o
 
 1. Do gene thing
 
-Compilation of all gene files given a TSV comparison file and a directory of all annotation files TSV format from RAST. This script relys on default RAST outputs including file names and column inputs so do not change anything from the downloads. The script uses the gene_id column to fine the correct annotation file and then file the correct gene within feature_id of the RAST isolate annotation files.
+   Compilation of all gene files given a TSV comparison file and a directory of all annotation files TSV format from RAST. This script relys on default RAST outputs including file names and column inputs so do not change anything from the downloads. The script uses the gene_id column to fine the correct annotation file and then file the correct gene within feature_id of the RAST isolate annotation files.
 
    ```
    ./gene.py genes.tsv  RAST/*
@@ -46,31 +46,31 @@ Compilation of all gene files given a TSV comparison file and a directory of all
 
 1. Align
 
-Aligns using MUSCLE (https://www.drive5.com/muscle/) at default settings. For right now this script is picky and needs to be in the same directory as your output directory from the previous step. AND since this script calls on the muscle.sh script you will need to make sure the muscle.sh script is also in the same directory as your output directory from the previous step. Don't worry about the fact you don't see muscle.sh in the command below, the script will deal with muscle.
+   Aligns using MUSCLE (https://www.drive5.com/muscle/) at default settings. For right now this script is picky and needs to be in the same directory as your output directory from the previous step. AND since this script calls on the muscle.sh script you will need to make sure the muscle.sh script is also in the same directory as your output directory from the previous step. Don't worry about the fact you don't see muscle.sh in the command below, the script will deal with muscle.
 
    ```
    ./align.sh output
    ```
 
-MUSCLE citations: 
+   MUSCLE citations: 
 
-Edgar, R.C. (2004) MUSCLE: multiple sequence alignment with high accuracy and high throughput
+   Edgar, R.C. (2004) MUSCLE: multiple sequence alignment with high accuracy and high throughput
   Nucleic Acids Res. 32(5):1792-1797 [Link to PubMed]. 
 
-Edgar, R.C. (2004) MUSCLE: a multiple sequence alignment method with reduced time and space complexity
+   Edgar, R.C. (2004) MUSCLE: a multiple sequence alignment method with reduced time and space complexity
   BMC Bioinformatics, (5) 113 [Link to PubMed]. 
 
 1. Rename output files so they sort gooder
 
-Because programming/software can be very pick and hate everything besides letters, numbers, underscores...and maybe dashes.
-
+   This renames all output alignment files such that they can be sorted using natural order. That is, the files should be named 1.aln.fasta, 2.aln.fasta, 3.aln.fasta where the digit comes from the column in the fasta filename `fig_321327_43_peg_<somedigits>.aln.fasta`.
+   
    ```
    ls -1 output_aln/* | while read f; do nn=$(echo $f | sed 's|output_aln/fig_321327_43_peg_\([0-9]\+\).aln.fasta|\1.aln.fasta|'); mv $f output_aln/$nn; done
    ```
 
 1. Make big-ass fasta concatenated file
 
-Takes all of your aligned gene files and concatenates them into one long "common gene set - genome". See the identifer pattern? That's why you cannot deviate from what RAST outputs. Again these scripts don't support full paths so this script needs to be in the same directory as your output_aln directory from the previous step.
+   Takes all of your aligned gene files and concatenates them into one long "common gene set - genome". See the identifer pattern? That's why you cannot deviate from what RAST outputs.
 
    ```
    ./sequence_files_concat.py --identifier-pattern "(fig\|\d+\.\d+\.peg)" output_aln/* > out.fasta
@@ -78,7 +78,7 @@ Takes all of your aligned gene files and concatenates them into one long "common
 
 1. Trim out all '-' columns
 
-Removes any site (column) from the entire alignment if it contains a dash. Again these scripts don't support full paths so this script needs to be in the same directory as your out.fasta from the previous step.
+   Removes any site (column) from the entire alignment if it contains a dash.
 
 Remember: This script trashes frame - so don't count of changing anything to amino acids, translation will be incorrect!
 
