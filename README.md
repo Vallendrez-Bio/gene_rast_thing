@@ -16,7 +16,7 @@ This program outputs a common gene set, aligned and ready for phylogenetic tree 
 
 # Input
 
-1. Genome/isolate annotation TSV formatted file.
+1. Genome/isolate annotation TSV or CSV formatted file. Right now the file cannot contain extra tab or commas so if some of the unused columns have tabs or columns in them delete those columns for now(See https://github.com/Vallendrez-Bio/gene_rast_thing/issues/2)
 1. Comparison TSV file generated from RAST genome comparison program.
 1. Make sure you do not edit the information inside the cells of the TSV files.
 
@@ -63,6 +63,7 @@ Comparison TSV files are generated in RAST when you select the compare genomes o
 1. Rename output files so they sort gooder
 
    This renames all output alignment files such that they can be sorted using natural order. That is, the files should be named 1.aln.fasta, 2.aln.fasta, 3.aln.fasta where the digit comes from the column in the fasta filename `fig_321327_43_peg_<somedigits>.aln.fasta`.
+   *Note*: You need to change the command below to match your data(change the `fig_321327_43` to whatever your sequence names are.
    
    ```
    ls -1 output_aln/* | while read f; do nn=$(echo $f | sed 's|output_aln/fig_321327_43_peg_\([0-9]\+\).aln.fasta|\1.aln.fasta|'); mv $f output_aln/$nn; done
