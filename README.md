@@ -16,11 +16,36 @@ This program outputs a common gene set, aligned and ready for phylogenetic tree 
 
 # Input
 
-1. Genome/isolate annotation TSV formatted file.
+1. Genome/isolate annotation TSV or CSV formatted file. Right now the file cannot contain extra tab or commas so if some of the unused columns have tabs or columns in them delete those columns for now(See https://github.com/Vallendrez-Bio/gene_rast_thing/issues/2)
 1. Comparison TSV file generated from RAST genome comparison program.
 1. Make sure you do not edit the information inside the cells of the TSV files.
 
 Comparison TSV files are generated in RAST when you select the compare genomes option and select your genome contents to compare export the results to a TSV file. The TSV file will start with columns: Contig, Gene, Length, gene id and function for the reference you selected followed by Hit, contig, gene, gene id, percent id and function for each of your isolates.
+
+## Downloading all rast jobs as TSV
+
+This is vs manually clicking each View Details and downloading the tsv file.
+This process is a bit clunky so beware.
+
+1. Head to the [job page](https://rast.nmpdr.org/rast.cgi?page=Jobs)
+1. You need a file that contains all the data from the table on that page and named `dlfiles.txt`
+
+   1. Copy/Paste the table data on that page into the `dlfiles.txt` file
+1. Get your websession id from chrome dev tools
+   
+   1. On the rast page do `CTRL+SHIFT+I` to open dev tools(assumes chrome web browser)
+   2. Open the Network tab
+   3. Click any of the `View Details` links
+   4. In the filter textbox type cgi and then select the cgi page in the list below
+   5. Under the Request Headers section look for the WebSession field and copy the value. Should look something like `WebSession=05335asdf4baf4csadasdf0b1e4cc276` and you want to copy the text on the right side of the `=`
+   6. Set that web session id in your terminal
+      ```
+      export WEBSESSIONID="<paste value here>"
+      ```
+3. Run the following which should download each file for you
+   ```
+   mkdir -p RAST; grep -E '^[0-9]{4,}' dlfiles.txt | awk '{printf("%s %s\n", $1, $4)}' | while read jobid file; do echo "$jobid $file"; bash rast_download.sh $file $jobid $WEBSESSIONID > RAST/$jobid.$file.tsv; done
+   ```
 
 # Preprocessing steps to facilitate script working
 
@@ -63,6 +88,7 @@ Comparison TSV files are generated in RAST when you select the compare genomes o
 1. Rename output files so they sort gooder
 
    This renames all output alignment files such that they can be sorted using natural order. That is, the files should be named 1.aln.fasta, 2.aln.fasta, 3.aln.fasta where the digit comes from the column in the fasta filename `fig_321327_43_peg_<somedigits>.aln.fasta`.
+   *Note*: You need to change the command below to match your data(change the `fig_321327_43` to whatever your sequence names are.
    
    ```
    ls -1 output_aln/* | while read f; do nn=$(echo $f | sed 's|output_aln/fig_321327_43_peg_\([0-9]\+\).aln.fasta|\1.aln.fasta|'); mv $f output_aln/$nn; done

@@ -4,11 +4,11 @@ import argparse
 import string
 import os
 
-def parse_tsv_file(fh, index=False):
-  header = [x.strip() for x in fh.readline().split('\t')]
+def parse_delimited_file(fh, delimiter='\t', index=False):
+  header = [x.strip() for x in fh.readline().split(delimiter)]
   parsed = []
   for line in fh:
-    values = [x.strip() for x in line.split('\t')]
+    values = [x.strip() for x in line.split(delimiter)]
     z = zip(header, values)
     if index:
       parsed.append(dict(z))
@@ -71,13 +71,18 @@ def parse_args():
     default='output',
     help='Directory to place output files into'
   )
+  args.add_argument(
+    '--genefile-delimiter',
+    default='\t',
+    help='Delmiter of gene file[Default: %(default)s]'
+  )
   return args.parse_args()
 
 def parse_index_files(files):
   index = {}
   for _file in files:
     with open(_file) as fh:
-      for row in parse_tsv_file(fh, index=True):
+      for row in parse_delimited_file(fh, index=True):
         index[row['feature_id']] = row['nucleotide_sequence']
   return index
 
@@ -88,7 +93,7 @@ def main():
     return
   os.makedirs(args.output_dir)
   with open(args.gene_file) as fh:
-    rows = parse_tsv_file(fh)
+    rows = parse_delimited_file(fh, args.genefile_delimiter)
   sequence_index = parse_index_files(args.index_files)
   rows_to_fasta(rows, sequence_index, args.output_dir)
 
