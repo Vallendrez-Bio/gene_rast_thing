@@ -22,6 +22,31 @@ This program outputs a common gene set, aligned and ready for phylogenetic tree 
 
 Comparison TSV files are generated in RAST when you select the compare genomes option and select your genome contents to compare export the results to a TSV file. The TSV file will start with columns: Contig, Gene, Length, gene id and function for the reference you selected followed by Hit, contig, gene, gene id, percent id and function for each of your isolates.
 
+## Downloading all rast jobs as TSV
+
+This is vs manually clicking each View Details and downloading the tsv file.
+This process is a bit clunky so beware.
+
+1. Head to the [job page](https://rast.nmpdr.org/rast.cgi?page=Jobs)
+1. You need a file that contains all the data from the table on that page and named `dlfiles.txt`
+
+   1. Copy/Paste the table data on that page into the `dlfiles.txt` file
+1. Get your websession id from chrome dev tools
+   
+   1. On the rast page do `CTRL+SHIFT+I` to open dev tools(assumes chrome web browser)
+   2. Open the Network tab
+   3. Click any of the `View Details` links
+   4. In the filter textbox type cgi and then select the cgi page in the list below
+   5. Under the Request Headers section look for the WebSession field and copy the value. Should look something like `WebSession=05335asdf4baf4csadasdf0b1e4cc276` and you want to copy the text on the right side of the `=`
+   6. Set that web session id in your terminal
+      ```
+      export WEBSESSIONID="<paste value here>"
+      ```
+3. Run the following which should download each file for you
+   ```
+   mkdir -p RAST; grep -E '^[0-9]{4,}' dlfiles.txt | awk '{printf("%s %s\n", $1, $4)}' | while read jobid file; do echo "$jobid $file"; bash rast_download.sh $file $jobid $WEBSESSIONID > RAST/$jobid.$file.tsv; done
+   ```
+
 # Preprocessing steps to facilitate script working
 
 1. Remove the first 4 columns from the RAST comparison file TSV, the Contig, gene, length and gene id for your reference in the RAST TSV comparison output.
